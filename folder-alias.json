@@ -1,0 +1,23 @@
+{
+    "uno.config.js": {
+        "description": "uno配置文件"
+    },
+    ".styleintrc.cjs": {
+        "description": "stylelint配置文件"
+    },
+    "src/AuthContextProvider.jsx": {
+        "description": "路由权限控制文件"
+    },
+    ".env": {
+        "description": "本地环境变量"
+    },
+    ".env.prod": {
+        "description": "生产环境变量"
+    },
+    ".env.test": {
+        "description": "测试环境变量"
+    },
+    "src/route": {
+        "description": "路由配置目录"
+    }
+}
