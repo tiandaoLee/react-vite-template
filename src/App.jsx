@@ -4,13 +4,13 @@
  * @Author: Li Yong
  * @Date: 2023-12-19 14:21:43
  * @LastEditors: Li Yong
- * @LastEditTime: 2023-12-20 19:17:27
+ * @LastEditTime: 2024-02-27 15:42:07
  */
 import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
-import { Spin } from 'antd'
+import { Spin, ConfigProvider, App } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
 import routes from '@/route/index.jsx'
-import { AuthProvider } from './AuthContextProvider'
 
 // 递归渲染路由配置
 const generateRoutes = (config) => {
@@ -24,7 +24,6 @@ const generateRoutes = (config) => {
         ) : (
           <Route path={path} element={<Navigate to={children[0].path} />}></Route>
         ))}
-
       {/* 子路由配置 */}
       {children && children.length > 0 ? (
         <Route path={path} element={element}>
@@ -39,16 +38,26 @@ const generateRoutes = (config) => {
 const AppRoutes = () => {
   return <Routes>{generateRoutes(routes)}</Routes>
 }
-const App = () => {
+const MyApp = () => {
   return (
     <Router>
-      <AuthProvider>
-        <Suspense fallback={<Spin />}>
-          <AppRoutes />
-        </Suspense>
-      </AuthProvider>
+      <ConfigProvider
+        locale={zhCN}
+        theme={{
+          token: {
+            headerHeight: '60px',
+            sideWidth: '200px',
+          },
+        }}
+      >
+        <App>
+          <Suspense fallback={<Spin />}>
+            <AppRoutes />
+          </Suspense>
+        </App>
+      </ConfigProvider>
     </Router>
   )
 }
 
-export default App
+export default MyApp

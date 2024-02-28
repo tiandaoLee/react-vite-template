@@ -2,12 +2,12 @@
  * @Descripttion:
  * @Version: 1.0.0
  * @Author: Li Yong
- * @Date: 2023-12-20 16:52:15
+ * @Date: 2023-12-21 15:59:16
  * @LastEditors: Li Yong
- * @LastEditTime: 2023-12-20 17:00:03
+ * @LastEditTime: 2023-12-21 15:59:46
  */
 import { Outlet } from 'react-router-dom'
-function Catalog(props) {
+function SingleLayout(props) {
   return (
     <div>
       <Outlet></Outlet>
@@ -15,4 +15,4 @@ function Catalog(props) {
   )
 }
 
-export default Catalog
+export default SingleLayout

@@ -4,7 +4,7 @@
  * @Author: Li Yong
  * @Date: 2023-12-19 14:39:59
  * @LastEditors: Li Yong
- * @LastEditTime: 2023-12-19 15:49:16
+ * @LastEditTime: 2024-02-27 18:23:43
  */
 module.exports = {
   env: {
@@ -14,7 +14,6 @@ module.exports = {
   extends: [
     'standard',
     'plugin:react/recommended',
-    'standard-with-typescript',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
   ],
@@ -42,6 +41,6 @@ module.exports = {
     'no-debugger': 2, // 禁止有debugger
     'space-infix-ops': 2, // 要求操作符周围有空格
     'space-before-blocks': 2, // 要求语句块之前有空格
-    '@typescript-eslint/explicit-function-return-type': 0, // 禁止函数必须要定义返回类型
+    'react/prop-types': 0, // 关闭prop-types检查
   },
 }

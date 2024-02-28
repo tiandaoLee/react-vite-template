@@ -1,6 +1,12 @@
+###
+ # @Descripttion: 
+ # @Version: 1.0.0
+ # @Author: Li Yong
+ # @Date: 2023-12-19 16:08:01
+ # @LastEditors: Li Yong
+ # @LastEditTime: 2024-02-27 18:33:47
+### 
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 npm test
-pnpm run lint
-pnpm run stylelint

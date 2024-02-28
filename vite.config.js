@@ -4,19 +4,20 @@
  * @Author: Li Yong
  * @Date: 2023-12-19 14:06:59
  * @LastEditors: Li Yong
- * @LastEditTime: 2023-12-20 09:06:57
+ * @LastEditTime: 2024-02-27 17:36:49
  */
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { presetUno, transformerAttributify } from 'unocss'
+// import { presetUno, transformerAttributify } from 'unocss'
+import { presetUno, transformerAttributifyJsx } from 'unocss'
 import path from 'path'
 
 export default defineConfig({
   base: './',
   plugins: [
     UnoCSS({
-      presets: [presetUno, transformerAttributify],
+      presets: [presetUno, transformerAttributifyJsx],
     }),
     react(),
   ],
@@ -29,12 +30,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // src 路径
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "@/styles/variables.scss";',
+      },
+    },
+  },
   server: {
     port: 5173, // 开发环境启动的端口
     proxy: {
       '/api': {
         // 当遇到 /api 路径时，将其转换成 target 的值
-        target: 'http://xx.xx.xx.xx:8080/api',
+        target: 'http://127.0.0.1:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''), // 将 /api 重写为空
       },

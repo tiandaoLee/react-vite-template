@@ -19,5 +19,14 @@
     },
     "src/route": {
         "description": "路由配置目录"
+    },
+    "src/layout": {
+        "description": "页面布局框架目录"
+    },
+    "src/layout/single.jsx": {
+        "description": "子页面布局框架"
+    },
+    "src/layout/index.jsx": {
+        "description": "主要页面布局框架"
     }
 }
