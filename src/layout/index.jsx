@@ -4,7 +4,7 @@
  * @Author: Li Yong
  * @Date: 2023-12-21 16:01:48
  * @LastEditors: Li Yong
- * @LastEditTime: 2023-12-21 17:44:51
+ * @LastEditTime: 2024-03-08 16:32:24
  */
 import { Layout, Menu, theme } from 'antd'
 import { Outlet } from 'react-router-dom'
@@ -76,9 +76,7 @@ function PageLayout(props) {
             items={items2}
           />
         </Sider>
-        <Content>
-          <Outlet></Outlet>
-        </Content>
+        <Content>{props.component ? props.component : <Outlet></Outlet>}</Content>
       </Layout>
     </Layout>
   )

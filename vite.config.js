@@ -4,7 +4,7 @@
  * @Author: Li Yong
  * @Date: 2023-12-19 14:06:59
  * @LastEditors: Li Yong
- * @LastEditTime: 2024-02-27 17:36:49
+ * @LastEditTime: 2024-02-28 11:28:04
  */
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
@@ -28,6 +28,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'), // src 路径
+      '/image': 'src/assets/images',
     },
   },
   css: {

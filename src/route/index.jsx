@@ -6,8 +6,8 @@
  * @LastEditors: Li Yong
  * @LastEditTime: 2024-02-26 11:08:18
  */
-import React, { lazy } from 'react'
-import { Navigate } from 'react-router-dom'
+import React, { lazy, Suspense } from 'react'
+import { Navigate, Spin } from 'react-router-dom'
 import { PrivateRoute } from '../AuthContextProvider'
 import Layout from '@/layout'
 
@@ -17,6 +17,8 @@ const Page404 = lazy(() => import(`@/pages/404/index.jsx`))
 const UserList = lazy(() => import(`@/pages/user/list/index.jsx`))
 const UserDetail = lazy(() => import(`@/pages/user/detail/index.jsx`))
 
+const lazyload = (children) => <Suspense fallback={<Spin />}>{children}</Suspense>
+
 const routers = [
   {
     path: '/',
@@ -24,7 +26,7 @@ const routers = [
   },
   {
     path: 'home',
-    element: <PrivateRoute element={<Home />} />,
+    element: <PrivateRoute element={lazyload(<Home />)} />,
   },
   {
     path: 'login',
@@ -37,11 +39,11 @@ const routers = [
     children: [
       {
         path: 'list/:id?',
-        element: <PrivateRoute element={<UserList />} />,
+        element: <PrivateRoute element={lazyload(<UserList />)} />,
       },
       {
         path: 'detail',
-        element: <PrivateRoute element={<UserDetail />} />,
+        element: <PrivateRoute element={lazyload(<UserDetail />)} />,
       },
     ],
   },

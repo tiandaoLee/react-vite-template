@@ -1,10 +1,10 @@
 /*
- * @Descripttion:
+ * @Descripttion: axois二次封装，支持请求取消，请求重复数据
  * @Version: 1.0.0
  * @Author: Li Yong
  * @Date: 2023-12-22 14:53:45
  * @LastEditors: Li Yong
- * @LastEditTime: 2024-02-27 18:17:27
+ * @LastEditTime: 2024-03-08 16:29:50
  */
 import axios from 'axios'
 import { AjaxMethod, Errors, LogoutCode } from '@/dataMap/api'
@@ -12,6 +12,9 @@ import { message } from 'antd'
 import userStore from '@/store/user'
 
 const TIMEOUT = 30000
+
+const requestMap = new Map()
+const pendingMap = new Map()
 
 export const getBaseUrl = (_param) => {
   return process.env.NODE_ENV === 'development' ? '/api' : process.env.VITE_APP_TEST_URL
@@ -25,15 +28,46 @@ const config = {
     'Content-Type': 'application/json',
   },
 }
-// 生成cookie
-// const createCustomCookie = () => {
-//   const _cookies = [
-//     { key: 'token', value: CookiesTools.getToken() || '' },
-//     { key: 'role_id', value: CookiesTools.getRole() || '' },
-//   ]
-//   const _cookiesText = _cookies.map((item) => `${item.key}=${item.value}`).join('&')
-//   return _cookiesText
-// }
+const genRequestKey = (config, excluParams = false) => {
+  const { url, method, data, params } = config
+  const reqParams = method === AjaxMethod.get ? params : data
+  return excluParams ? `${url}&${method}` : `${url}&${method}&${JSON.stringify(reqParams)}`
+}
+
+const addRequestToMap = (config) => {
+  const key = genRequestKey(config)
+  const existRequest = requestMap.get(key)
+  requestMap.set(key, { ...existRequest, config, time: new Date().getTime() })
+}
+
+const deleteRequest = (config) => {
+  const key1 = genRequestKey(config)
+  requestMap.delete(key1)
+}
+
+const addPendingToMap = (config) => {
+  const key = genRequestKey(config, true)
+  const controller = new AbortController()
+  config.signal = controller.signal
+  pendingMap.set(key, controller)
+  delete config.autoAbort
+}
+const deletePengding = (config) => {
+  const key = genRequestKey(config, true)
+  pendingMap.delete(key)
+}
+
+const deleteExistPendingRequest = (config) => {
+  const key = genRequestKey(config, true)
+  const existPendingRequest = pendingMap.get(key)
+  if (existPendingRequest) {
+    existPendingRequest.abort()
+    pendingMap.delete(key)
+    const key1 = genRequestKey(config)
+    requestMap.delete(key1)
+  }
+}
+
 export const _axios = axios.create(config)
 _axios.interceptors.request.use(
   function (config) {
@@ -42,6 +76,8 @@ _axios.interceptors.request.use(
     // config.headers['authorization'] = `Bearer ${CookiesTools.getToken()}`
     // config.headers['tenant-id'] = store.state.vuex_tenantId
     // config.headers['data-view-id'] = store.state.vuex_dataViewId
+    addRequestToMap(config)
+    config.autoAbort && addPendingToMap(config)
     return config
   },
   function (error) {
@@ -53,6 +89,8 @@ _axios.interceptors.request.use(
 // 返回拦截器
 _axios.interceptors.response.use(
   function (response) {
+    deleteRequest(response.config)
+    deletePengding(response.config)
     // Do something
     return response
   },
@@ -73,7 +111,16 @@ const request = async (_param) => {
       _param.method = AjaxMethod.post
     }
     _axios.defaults.baseURL = getBaseUrl(_param)
-    const response = await _axios(_param)
+    // 删除已存在的请求
+    deleteExistPendingRequest(_param)
+    // 生成请求key
+    const key = genRequestKey(_param)
+    const existRequest = requestMap.get(key)
+    const reqPromise = existRequest ? existRequest.promise : _axios(_param)
+    if (!existRequest) {
+      requestMap.set(key, { promise: reqPromise })
+    }
+    const response = await reqPromise
     const { status, data } = response
     if (status === 200) {
       // 登录失效
@@ -100,6 +147,7 @@ const request = async (_param) => {
       return _param.notOrigin ? data.data : data
     }
   } catch (err) {
+    console.log('🚀 ~ request ~ err:', err)
     return Promise.reject(
       new Error({
         code: 1,
